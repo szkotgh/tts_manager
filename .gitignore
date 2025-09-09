@@ -1,0 +1,6 @@
+__pycache__/
+.tts_temp.mp3
+.DS_Store
+
+google_auth.json
+.env
