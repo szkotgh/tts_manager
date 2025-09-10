@@ -37,13 +37,10 @@ class TTSManager:
             self.is_initialized = True
         except Exception as e:
             print(f"[TTSManager] Initialization Error: {e}")
+            self.initialization_error_detail = str(e)
             self.is_initialized = False
 
     def _play_internal(self, text: str):
-        if not self.is_initialized:
-            print("[TTSManager] Not Initialized")
-            return
-
         try:
             synthesis_input = texttospeech.SynthesisInput(text=text)
             response = self.client.synthesize_speech(
@@ -67,6 +64,9 @@ class TTSManager:
             self.channel_ready.clear()
 
     def play(self, text: str):
+        if not self.is_initialized:
+            print(f"[TTSManager] Not Initialized: {self.initialization_error_detail}")
+            return
         print(f"[TTSManager] Playing: {text}")
         self.channel_ready.clear()
         thread = threading.Thread(target=self._play_internal, args=(text,))
@@ -81,6 +81,8 @@ class TTSManager:
         self.channel_ready.clear()
 
     def get_busy(self):
+        if not self.is_initialized:
+            return False
         if not self.channel_ready.is_set():
             return True
         if self.channel is None:
