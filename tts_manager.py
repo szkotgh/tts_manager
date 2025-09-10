@@ -1,4 +1,4 @@
-import pygame
+from pygame import mixer
 import threading
 from google.cloud import texttospeech
 
@@ -32,7 +32,7 @@ class TTSManager:
                 speaking_rate=1.1,
             )
             
-            pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
+            mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
             print("[TTSManager] Initialized")
             self.is_initialized = True
         except Exception as e:
@@ -59,7 +59,7 @@ class TTSManager:
             with open(self.FILE_SAVE_PATH, "wb") as out:
                 out.write(response.audio_content)
 
-            self.sound = pygame.mixer.Sound(self.FILE_SAVE_PATH)
+            self.sound = mixer.Sound(self.FILE_SAVE_PATH)
             self.channel = self.sound.play()
             self.channel_ready.set()
         except Exception as e:
@@ -100,5 +100,5 @@ class TTSManager:
     def cleanup(self):
         print("[TTSManager] Cleaning up...")
         self.stop()
-        pygame.mixer.quit()
+        mixer.quit()
         print("[TTSManager] Cleanup done.")
